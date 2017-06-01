@@ -42,7 +42,7 @@ pub fn rust_code(ast: ast::Ast, config: &Config) -> Result<String, Error> {
 }
 
 fn emit_main_function_start(write: &mut Write) -> Result<(), io::Error> {
-    writeln!(write, "fn render({}: &mut ::std::io::Write) -> Result<(), ::std::io::Error> {{",
+    writeln!(write, "pub fn render({}: &mut ::std::io::Write) -> Result<(), ::std::io::Error> {{",
         INTERNAL_WRITER_NAME)
 }
 

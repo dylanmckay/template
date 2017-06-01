@@ -1,20 +1,6 @@
-[package]
-name = "tempo"
-version = "0.1.0"
-authors = ["Dylan McKay <me@dylanmckay.io>"]
+[workspace]
+members = [
+  "tempo",
+  "tempo-include",
+]
 
-description = "A better templating engine for Rust"
-license = "MIT"
-
-[dependencies]
-error-chain = "0.10"
-regex = "0.2"
-clap = "2.24"
-
-[lib]
-name = "tempo"
-path = "src/lib.rs"
-
-[[bin]]
-name = "tempo"
-path = "tools/tempo.rs"

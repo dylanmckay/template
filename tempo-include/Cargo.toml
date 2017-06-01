@@ -1,0 +1,15 @@
+[package]
+name = "tempo-include"
+version = "0.1.0"
+authors = ["Dylan McKay <me@dylanmckay.io>"]
+
+description = "A better templating engine for Rust"
+license = "MIT"
+
+[lib]
+name = "tempo_include"
+crate-type = ["dylib"]
+
+[dependencies]
+tempo = { path = "../tempo", version = "0.1.0" }
+
