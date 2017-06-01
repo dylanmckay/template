@@ -16,7 +16,7 @@ pub struct Config
 }
 
 /// Translate an AST into source code.
-pub fn trans(ast: ast::Ast, config: &Config) -> Result<String, Error> {
+pub fn rust_code(ast: ast::Ast, config: &Config) -> Result<String, Error> {
     let mut write = Cursor::new(Vec::new());
 
     if config.include_entry_point {

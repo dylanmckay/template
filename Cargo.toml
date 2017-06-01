@@ -3,7 +3,7 @@ name = "tempo"
 version = "0.1.0"
 authors = ["Dylan McKay <me@dylanmckay.io>"]
 
-description = "A Rust templating library"
+description = "A better templating engine for Rust"
 license = "MIT"
 
 [dependencies]

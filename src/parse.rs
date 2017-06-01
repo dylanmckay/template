@@ -3,7 +3,8 @@ use ast;
 
 use regex::Regex;
 
-pub const CODE_BLOCK_REGEX: &'static str = "<%.*?%>";
+/// The regex used to denote code snippets.
+const CODE_BLOCK_REGEX: &'static str = "<%.*?%>";
 
 /// A range of characters in the text.
 struct Span {
@@ -23,7 +24,8 @@ struct Fragment {
     span: Span,
 }
 
-pub fn parse(input: &str) -> Result<ast::Ast, Error> {
+/// Parse an AST from a string.
+pub fn parse_str(input: &str) -> Result<ast::Ast, Error> {
     let code_block_regex = Regex::new(CODE_BLOCK_REGEX).unwrap();
 
     let code_spans: Vec<_> = code_block_regex.find_iter(input).map(|m| {

@@ -2,6 +2,7 @@
 extern crate regex;
 
 pub use self::errors::{Error, ErrorKind};
+pub use self::ast::Ast;
 
 pub mod ast;
 pub mod parse;
