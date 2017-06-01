@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    <ul>
+      <% for i in 0..50 { %>
+        <li>Hello <%= i %></li>
+      <% } %>
+    </ul>
+  </body>
+</html>

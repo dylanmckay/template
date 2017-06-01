@@ -8,3 +8,5 @@ pub mod parse;
 pub mod trans;
 pub mod errors;
 
+pub const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+
