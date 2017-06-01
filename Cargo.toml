@@ -9,6 +9,7 @@ license = "MIT"
 [dependencies]
 error-chain = "0.10"
 regex = "0.2"
+clap = "2.24"
 
 [lib]
 name = "tempo"

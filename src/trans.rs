@@ -7,8 +7,21 @@ use std::io;
 
 const INTERNAL_WRITER_NAME: &'static str = "_writer";
 
-pub fn trans(ast: ast::Ast) -> Result<String, Error> {
+/// Configuration options for translation.
+#[derive(Clone, Debug)]
+pub struct Config
+{
+    /// Whether an entry point should be included.
+    pub include_entry_point: bool,
+}
+
+/// Translate an AST into source code.
+pub fn trans(ast: ast::Ast, config: &Config) -> Result<String, Error> {
     let mut write = Cursor::new(Vec::new());
+
+    if config.include_entry_point {
+        emit_entry_point(&mut write)?;
+    }
 
     emit_main_function_start(&mut write)?;
 
@@ -46,6 +59,14 @@ fn emit_text(text: &str, write: &mut Write) -> Result<(), io::Error> {
         escape_string(text))
 }
 
+fn emit_entry_point(write: &mut Write) -> Result<(), io::Error> {
+    writeln!(write, "fn main() {{")?;
+    writeln!(write, "    render(&mut ::std::io::stdout()).unwrap()")?;
+    writeln!(write, "}}\n")?;
+
+    Ok(())
+}
+
 fn escape_string(text: &str) -> String {
     text.replace("\\", "\\\\")
         .replace("\n", "\\n")
@@ -54,4 +75,14 @@ fn escape_string(text: &str) -> String {
         .replace("\"", "\\\"")
         .replace("'", "\\'")
 }
+
+impl Default for Config
+{
+    fn default() -> Self {
+        Config {
+            include_entry_point: false,
+        }
+    }
+}
+
 
