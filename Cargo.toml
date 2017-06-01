@@ -1,5 +1,5 @@
 [package]
-name = "template"
+name = "tempo"
 version = "0.1.0"
 authors = ["Dylan McKay <me@dylanmckay.io>"]
 
@@ -8,9 +8,9 @@ error-chain = "0.10"
 regex = "0.2"
 
 [lib]
-name = "template"
+name = "tempo"
 path = "src/lib.rs"
 
 [[bin]]
-name = "dump"
-path = "tools/dump.rs"
+name = "tempo"
+path = "tools/tempo.rs"
