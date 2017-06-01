@@ -42,6 +42,16 @@ fn emit_code(code: &str, write: &mut Write) -> Result<(), io::Error> {
 }
 
 fn emit_text(text: &str, write: &mut Write) -> Result<(), io::Error> {
-    writeln!(write, "    {}.write_all(b\"{}\")?;", INTERNAL_WRITER_NAME, text)
+    writeln!(write, "    {}.write_all(b\"{}\")?;", INTERNAL_WRITER_NAME,
+        escape_string(text))
+}
+
+fn escape_string(text: &str) -> String {
+    text.replace("\\", "\\\\")
+        .replace("\n", "\\n")
+        .replace("\r", "\\r")
+        .replace("\t", "\\t")
+        .replace("\"", "\\\"")
+        .replace("'", "\\'")
 }
 

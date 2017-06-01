@@ -1,7 +1,7 @@
 extern crate template;
 
 fn main() {
-    let ast = template::parse::parse("<% if true {%> hello <% } %>").unwrap();
+    let ast = template::parse::parse("<% if true {%> hello world\n<% } %>").unwrap();
 
     let rust_code = template::trans::trans(ast).unwrap();
 
