@@ -53,9 +53,15 @@ pub fn parse(input: &str) -> Result<ast::Ast, Error> {
     let mut fragments = remove_empty_fragments(fragments);
     trim_delimiters_from_code_frags(&mut fragments);
 
-
     let items = fragments.into_iter().map(|frag| {
         let frag_text = input[frag.span.low_index..frag.span.high_index].to_string();
+
+        // TODO: temp
+        // if let FragmentKind::Code = frag.kind {
+        //     let parse_sess = syntax::parse::ParseSess::new(syntax::codemap::FilePathMapping::empty());
+        //     let stmt = syntax::parse::parse_stmt_from_source_str("source name".to_owned(), frag_text.clone(), &parse_sess).unwrap();
+        //     println!("stmt: {:?}", stmt);
+        // }
 
         let item_kind = match frag.kind {
             FragmentKind::Text => ast::ItemKind::Text(frag_text),
@@ -65,9 +71,7 @@ pub fn parse(input: &str) -> Result<ast::Ast, Error> {
         ast::Item { kind: item_kind }
     }).collect();
 
-    let ast = ast::Ast { items: items };
-
-    Ok(inflate(ast))
+    Ok(ast::Ast { items: items })
 }
 
 fn verify_no_overlapping_spans(_spans: &[Span]) {
@@ -109,28 +113,6 @@ fn trim_delimiters_from_code_frags(fragments: &mut Vec<Fragment>) {
             // Trim the '<%' and '%>'.
             frag.span.low_index += 2;
             frag.span.high_index -= 2;
-        }
-    }
-}
-
-fn inflate(ast: ast::Ast) -> ast::Ast {
-    ast::Ast {
-        items: ast.items.into_iter().map(|item| {
-            if let ast::ItemKind::Code(code) = item.kind {
-                inflate_code(code)
-            } else {
-                item
-            }
-        }).collect(),
-    }
-}
-
-fn inflate_code(code: String) -> ast::Item {
-    if code.trim_right().ends_with("{") {
-        unimplemented!();
-    } else {
-        ast::Item {
-            kind: ast::ItemKind::Code(code),
         }
     }
 }

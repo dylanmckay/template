@@ -17,8 +17,6 @@ pub enum ItemKind
     Text(String),
     /// A block of code.
     Code(String),
-    /// A code block containing a bunch of sub-items.
-    CodeBlock(Vec<Item>),
 }
 
 impl From<Vec<Item>> for Ast
