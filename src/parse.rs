@@ -28,7 +28,6 @@ pub fn parse(input: &str) -> Result<ast::Ast, Error> {
 
     let code_spans: Vec<_> = code_block_regex.find_iter(input).map(|m| {
         Span {
-            // add/subtract the '<%' and '%>' parts.
             low_index: m.start(),
             high_index: m.end(),
         }
@@ -42,7 +41,7 @@ pub fn parse(input: &str) -> Result<ast::Ast, Error> {
 
     let fragments = if !code_fragments.is_empty() {
         // If we have code fragments, we can interpolate the text fragments between them.
-        fill_in_text_fragments(code_fragments)
+        fill_in_text_fragments(input, code_fragments)
     } else {
         vec![Fragment {
             kind: FragmentKind::Text,
@@ -81,10 +80,10 @@ fn verify_no_overlapping_spans(_spans: &[Span]) {
     // FIXME: verify that no code spans overlap.
 }
 
-fn fill_in_text_fragments(code_fragments: Vec<Fragment>) -> Vec<Fragment> {
+fn fill_in_text_fragments(input: &str, code_fragments: Vec<Fragment>) -> Vec<Fragment> {
     let mut current_index = 0;
 
-    code_fragments.into_iter().flat_map(|code_fragment| {
+    let mut fragments: Vec<_> = code_fragments.into_iter().flat_map(|code_fragment| {
         let high_index = code_fragment.span.high_index;
         assert!(code_fragment.span.low_index >= current_index);
 
@@ -102,7 +101,18 @@ fn fill_in_text_fragments(code_fragments: Vec<Fragment>) -> Vec<Fragment> {
 
         current_index = high_index;
         fragments
-    }).collect()
+    }).collect();
+
+    // If we have text after the last code block, we must
+    // manually insert it here.
+    if !input.is_empty() && current_index != input.len() {
+        fragments.push(Fragment {
+            kind: FragmentKind::Text,
+            span: Span { low_index: current_index, high_index: input.len() },
+        });
+    }
+
+    fragments
 }
 
 fn remove_empty_fragments(fragments: Vec<Fragment>) -> Vec<Fragment> {
@@ -147,7 +157,23 @@ mod test {
     #[test]
     fn parses_standalone_code() {
         assert_eq!(parse("<% hello %>").unwrap(), vec![
-            Item { kind: ItemKind::Code(" hello ".to_owned()) },
+            Item { kind: ItemKind::Code { source: " hello ".to_owned(), print_result: false } },
+        ].into());
+    }
+
+    #[test]
+    fn parses_two_adjacent_code() {
+        assert_eq!(parse("<% hello %><% world %>").unwrap(), vec![
+            Item { kind: ItemKind::Code { source: " hello ".to_owned(), print_result: false } },
+            Item { kind: ItemKind::Code { source: " world ".to_owned(), print_result: false } },
+        ].into());
+    }
+
+    #[test]
+    fn parses_trailing_text() {
+        assert_eq!(parse("<% hello %>\n world").unwrap(), vec![
+            Item { kind: ItemKind::Code { source: " hello ".to_owned(), print_result: false } },
+            Item { kind: ItemKind::Text("\n world".to_owned()) },
         ].into());
     }
 }
