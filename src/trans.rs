@@ -27,8 +27,8 @@ pub fn trans(ast: ast::Ast, config: &Config) -> Result<String, Error> {
 
     for item in ast.items {
         match item.kind {
-            ast::ItemKind::Code(code) => {
-                emit_code(&code, &mut write)?;
+            ast::ItemKind::Code { source, print_result } => {
+                emit_code(&source, print_result, &mut write)?;
             },
             ast::ItemKind::Text(text) => {
                 emit_text(&text, &mut write)?;
@@ -50,8 +50,18 @@ fn emit_main_function_end(write: &mut Write) -> Result<(), io::Error> {
     writeln!(write, "\n    ;Ok(())\n }}")
 }
 
-fn emit_code(code: &str, write: &mut Write) -> Result<(), io::Error> {
-    writeln!(write, "    {}", code.trim())
+fn emit_code(source: &str, print_result: bool, write: &mut Write)
+    -> Result<(), io::Error> {
+    if print_result {
+        writeln!(write, "    {{")?;
+        writeln!(write, "        let result = {};", source)?;
+        writeln!(write, "        write!({}, \"{{}}\", result)?;", INTERNAL_WRITER_NAME)?;
+        writeln!(write, "    }}")?;
+    } else {
+        writeln!(write, "    {}", source.trim())?;
+    }
+
+    Ok(())
 }
 
 fn emit_text(text: &str, write: &mut Write) -> Result<(), io::Error> {

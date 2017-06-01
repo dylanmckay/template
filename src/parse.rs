@@ -54,18 +54,21 @@ pub fn parse(input: &str) -> Result<ast::Ast, Error> {
     trim_delimiters_from_code_frags(&mut fragments);
 
     let items = fragments.into_iter().map(|frag| {
-        let frag_text = input[frag.span.low_index..frag.span.high_index].to_string();
+        let mut frag_text = input[frag.span.low_index..frag.span.high_index].to_string();
 
-        // TODO: temp
-        // if let FragmentKind::Code = frag.kind {
-        //     let parse_sess = syntax::parse::ParseSess::new(syntax::codemap::FilePathMapping::empty());
-        //     let stmt = syntax::parse::parse_stmt_from_source_str("source name".to_owned(), frag_text.clone(), &parse_sess).unwrap();
-        //     println!("stmt: {:?}", stmt);
-        // }
+        let print_result = if frag_text.starts_with("=") {
+            frag_text = frag_text[1..].to_string();
+            true
+        } else {
+            false
+        };
 
         let item_kind = match frag.kind {
             FragmentKind::Text => ast::ItemKind::Text(frag_text),
-            FragmentKind::Code => ast::ItemKind::Code(frag_text),
+            FragmentKind::Code => ast::ItemKind::Code {
+                source: frag_text,
+                print_result: print_result,
+            },
         };
 
         ast::Item { kind: item_kind }

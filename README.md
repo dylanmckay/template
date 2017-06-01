@@ -11,7 +11,7 @@ Example
   </head>
   <body>
     <ul>
-      <% for i in 0..50 { %>
+      <% for i in 0..10 { %>
         <li>Hello <%= i %></li>
       <% } %>
     </ul>
