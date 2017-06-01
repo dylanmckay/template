@@ -3,6 +3,9 @@ name = "tempo"
 version = "0.1.0"
 authors = ["Dylan McKay <me@dylanmckay.io>"]
 
+description = "A Rust templating library"
+license = "MIT"
+
 [dependencies]
 error-chain = "0.10"
 regex = "0.2"
